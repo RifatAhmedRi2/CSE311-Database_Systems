@@ -1,0 +1,67 @@
+
+Create Table Locations (
+	LocationID int constraint locID_pk primary key,
+	StreetAddress varchar(50),
+	PostalCode varchar(10) not null,
+	City varchar(25) not null,
+	State varchar(25),
+	CountryCode varchar(10) not null
+)
+
+Create Table Storage (
+	BloodGroup varchar(10) constraint bg_pk primary key,
+	Amount decimal(10,2)
+)
+
+Create Table Patient (
+	PatientID int constraint patID_pk primary key,
+	Name varchar(25) not null,
+	Age smallint not null,
+	Gender varchar(25) not null,
+	LocationID int,
+	BloodGroup varchar(10) not null,
+	ContactNo varchar(25) not null,
+	constraint patloc_fk foreign key (LocationID) references Locations (LocationID)
+	on delete cascade on update cascade,
+	constraint patbg_fk foreign key (BloodGroup) references Storage (BloodGroup)
+)
+
+Create Table Requests (
+	ReqNo int constraint reqNo_pk primary key,
+	PatientID int not null,
+	NeededBy date,
+	Amount decimal(10,2) not null,
+	constraint patID_fk foreign key (PatientID) references Patient (PatientID)
+	on delete cascade on update cascade
+)
+
+Create Table Issued (
+	IssueRefNo varchar(25) constraint issue_pk primary key,
+	ReqNo int not null,
+	IssuedTo varchar(25),
+	IssueDate date not null,
+	constraint reqNo_fk foreign key (ReqNo) references Requests (ReqNo)
+	on delete cascade on update cascade
+)
+
+Create Table Donor (
+	DonorID int constraint donID_pk primary key,
+	Name varchar(25),
+	Age smallint not null,
+	Gender varchar(25) not null,
+	LocationID int,
+	BloodGroup varchar(10) not null,
+	ContactNo varchar(25),
+	constraint donloc_fk foreign key (LocationID) references Locations (LocationID)
+	on delete cascade on update cascade,
+	constraint donbg_fk foreign key (BloodGroup) references Storage (BloodGroup)
+)
+
+Create Table Donation_History (
+	DonationNo int constraint donNo_pk primary key,
+	DonorID int not null,
+	Amount decimal(10,2) not null,
+	DonationDate date not null,
+	constraint donHis_fk foreign key (DonorID) references Donor (DonorID)
+	on delete cascade on update cascade
+)
